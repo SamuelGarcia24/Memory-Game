@@ -39,8 +39,15 @@ class GameViewModel : ViewModel() {
     var flippedCards by mutableStateOf(listOf<Boolean>())
         private set
 
+    // stores the victory state
+    var isGameOver by mutableStateOf(false)
+        private set
+
+    private var currentCardCount = 0
+
     // initialize game with specific number of cards
     fun initializeGame(cardCount: Int) {
+        currentCardCount = cardCount
         // calculate how many pairs we need
         val pairsNeeded = cardCount / 2
 
@@ -56,10 +63,13 @@ class GameViewModel : ViewModel() {
         // reset selections
         firstSelectedCardIndex = null
         secondSelectedCardIndex = null
+        isGameOver = false
     }
 
     // called when a card is clicked
     fun onCardClicked(index: Int) {
+        // ignore click if game is over
+        if (isGameOver) return
 
         // ignore click if the card is already flipped
         if (flippedCards[index]) return
@@ -103,11 +113,20 @@ class GameViewModel : ViewModel() {
                     it[firstIndex] = false
                     it[secondIndex] = false
                 }
+            } else {
+                // Check if all cards are flipped
+                if (flippedCards.all { it }) {
+                    isGameOver = true
+                }
             }
 
             // reset selected cards
             firstSelectedCardIndex = null
             secondSelectedCardIndex = null
         }
+    }
+
+    fun resetGame() {
+        initializeGame(currentCardCount)
     }
 }

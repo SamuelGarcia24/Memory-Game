@@ -1,17 +1,29 @@
 package com.ud.memorygame.design
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.ud.memorygame.viewModel.GameViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun GameScreen(
     modifier: Modifier = Modifier,
-    cardCount: Int,  // receive card count from navigation
+    cardCount: Int,
+    onNavigateBack: () -> Unit,
     viewModel: GameViewModel = viewModel()
 ) {
     // initialize game when card count changes
@@ -23,33 +35,84 @@ fun GameScreen(
     val columns = when (cardCount) {
         12 -> 3  // 4x3 grid
         16 -> 4  // 4x4 grid
-        20 -> 4  // 4x5 grid (still 4 columns)
+        20 -> 4  // 4x5 grid
         else -> 3
     }
 
-    // grid layout for the memory cards
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(columns),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        // create cards based on viewModel.cards size
-        items(viewModel.cards.size) { index ->
-            Box(
-                modifier = Modifier
-                    .aspectRatio(1f)
-                    .fillMaxWidth()
+    Box(modifier = Modifier.fillMaxSize()) {
+        // grid layout for the memory cards
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columns),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(viewModel.cards.size) { index ->
+                Box(
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .fillMaxWidth()
+                ) {
+                    MemoryCard(
+                        imageRes = viewModel.cards[index],
+                        isFlipped = viewModel.flippedCards[index],
+                        onClick = {
+                            viewModel.onCardClicked(index)
+                        }
+                    )
+                }
+            }
+        }
+
+        // Victory Dialog
+        if (viewModel.isGameOver) {
+            VictoryDialog(
+                onReset = { viewModel.resetGame() },
+                onExit = onNavigateBack
+            )
+        }
+    }
+}
+
+@Composable
+fun VictoryDialog(onReset: () -> Unit, onExit: () -> Unit) {
+    Dialog(onDismissRequest = {}) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 8.dp
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                MemoryCard(
-                    imageRes = viewModel.cards[index],
-                    isFlipped = viewModel.flippedCards[index],
-                    onClick = {
-                        viewModel.onCardClicked(index)
-                    }
+                Text(
+                    text = "Congratulations!",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
                 )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "You've matched all pairs!",
+                    fontSize = 16.sp
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = onReset,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Play Again")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = onExit,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Main Menu")
+                }
             }
         }
     }

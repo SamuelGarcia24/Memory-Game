@@ -94,7 +94,10 @@ fun MemoryGameApp(
 
             GameScreen(
                 modifier = Modifier,
-                cardCount = cardCount
+                cardCount = cardCount,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
             )
 
             // resume music when leaving game
