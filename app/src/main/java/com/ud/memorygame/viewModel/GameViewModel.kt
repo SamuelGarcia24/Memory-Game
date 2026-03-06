@@ -47,6 +47,10 @@ class GameViewModel : ViewModel() {
     var moves by mutableStateOf(0)
         private set
 
+    // pairs found counter
+    var pairsFound by mutableStateOf(0)
+        private set
+
     private var currentCardCount = 0
 
     // initialize game with specific number of cards
@@ -69,6 +73,7 @@ class GameViewModel : ViewModel() {
         secondSelectedCardIndex = null
         isGameOver = false
         moves = 0
+        pairsFound = 0
     }
 
     // called when a card is clicked
@@ -120,6 +125,9 @@ class GameViewModel : ViewModel() {
                     it[secondIndex] = false
                 }
             } else {
+                // it's a match!
+                pairsFound++
+
                 // Check if all cards are flipped
                 if (flippedCards.all { it }) {
                     isGameOver = true
