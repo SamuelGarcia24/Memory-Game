@@ -41,25 +41,36 @@ fun GameScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Header with Moves and Pairs counter
-            Row(
+            // Header with Moves, Timer and Pairs counter
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Moves: ${viewModel.moves}",
-                    fontSize = 20.sp,
+                    text = "Time: ${formatTime(viewModel.secondsElapsed)}",
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.secondary
                 )
-                Text(
-                    text = "Pairs: ${viewModel.pairsFound} / ${cardCount / 2}",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Moves: ${viewModel.moves}",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "Pairs: ${viewModel.pairsFound} / ${cardCount / 2}",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
 
             // grid layout for the memory cards
@@ -114,6 +125,7 @@ fun GameScreen(
         if (viewModel.isGameOver) {
             VictoryDialog(
                 moves = viewModel.moves,
+                time = viewModel.secondsElapsed,
                 onReset = { viewModel.resetGame() },
                 onExit = onNavigateBack
             )
@@ -121,9 +133,8 @@ fun GameScreen(
     }
 }
 
-// victory screen
 @Composable
-fun VictoryDialog(moves: Int, onReset: () -> Unit, onExit: () -> Unit) {
+fun VictoryDialog(moves: Int, time: Int, onReset: () -> Unit, onExit: () -> Unit) {
     Dialog(onDismissRequest = {}) {
         Surface(
             shape = RoundedCornerShape(16.dp),
@@ -140,9 +151,14 @@ fun VictoryDialog(moves: Int, onReset: () -> Unit, onExit: () -> Unit) {
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "You've matched all pairs in $moves moves!",
+                    text = "Total Time: ${formatTime(time)}",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Total Moves: $moves",
                     fontSize = 16.sp
                 )
                 Spacer(modifier = Modifier.height(24.dp))
@@ -162,4 +178,10 @@ fun VictoryDialog(moves: Int, onReset: () -> Unit, onExit: () -> Unit) {
             }
         }
     }
+}
+
+private fun formatTime(seconds: Int): String {
+    val minutes = seconds / 60
+    val remainingSeconds = seconds % 60
+    return "%02d:%02d".format(minutes, remainingSeconds)
 }

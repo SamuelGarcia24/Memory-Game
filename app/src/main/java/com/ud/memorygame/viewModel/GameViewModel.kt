@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.ud.memorygame.R
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -51,6 +52,11 @@ class GameViewModel : ViewModel() {
     var pairsFound by mutableStateOf(0)
         private set
 
+    // time in seconds
+    var secondsElapsed by mutableStateOf(0)
+        private set
+
+    private var timerJob: Job? = null
     private var currentCardCount = 0
 
     // initialize game with specific number of cards
@@ -74,6 +80,19 @@ class GameViewModel : ViewModel() {
         isGameOver = false
         moves = 0
         pairsFound = 0
+        secondsElapsed = 0
+        
+        startTimer()
+    }
+
+    private fun startTimer() {
+        timerJob?.cancel()
+        timerJob = viewModelScope.launch {
+            while (!isGameOver) {
+                delay(1000)
+                secondsElapsed++
+            }
+        }
     }
 
     // called when a card is clicked
@@ -131,6 +150,7 @@ class GameViewModel : ViewModel() {
                 // Check if all cards are flipped
                 if (flippedCards.all { it }) {
                     isGameOver = true
+                    timerJob?.cancel()
                 }
             }
 
@@ -142,5 +162,10 @@ class GameViewModel : ViewModel() {
 
     fun resetGame() {
         initializeGame(currentCardCount)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        timerJob?.cancel()
     }
 }
