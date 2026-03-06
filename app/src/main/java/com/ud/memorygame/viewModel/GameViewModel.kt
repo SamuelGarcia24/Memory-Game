@@ -39,7 +39,7 @@ class GameViewModel : ViewModel() {
     var flippedCards by mutableStateOf(listOf<Boolean>())
         private set
 
-    // stores the victory state
+    // the victory state
     var isGameOver by mutableStateOf(false)
         private set
 
