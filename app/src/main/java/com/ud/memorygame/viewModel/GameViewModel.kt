@@ -43,6 +43,10 @@ class GameViewModel : ViewModel() {
     var isGameOver by mutableStateOf(false)
         private set
 
+    // moves counter
+    var moves by mutableStateOf(0)
+        private set
+
     private var currentCardCount = 0
 
     // initialize game with specific number of cards
@@ -64,6 +68,7 @@ class GameViewModel : ViewModel() {
         firstSelectedCardIndex = null
         secondSelectedCardIndex = null
         isGameOver = false
+        moves = 0
     }
 
     // called when a card is clicked
@@ -91,6 +96,7 @@ class GameViewModel : ViewModel() {
         // store second selected card and check match
         else if (secondSelectedCardIndex == null) {
             secondSelectedCardIndex = index
+            moves++ // increment moves when second card is picked
             checkMatch()
         }
     }

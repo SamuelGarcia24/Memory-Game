@@ -41,12 +41,27 @@ fun GameScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
+            // Header with Moves counter
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Moves: ${viewModel.moves}",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
             // grid layout for the memory cards
             LazyVerticalGrid(
                 columns = GridCells.Fixed(columns),
                 modifier = Modifier
                     .weight(1f)
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -71,7 +86,7 @@ fun GameScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 32.dp, start = 16.dp, end = 16.dp),
+                    .padding(bottom = 32.dp, start = 16.dp, end = 16.dp, top = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Button(
@@ -92,6 +107,7 @@ fun GameScreen(
         // Victory Dialog
         if (viewModel.isGameOver) {
             VictoryDialog(
+                moves = viewModel.moves,
                 onReset = { viewModel.resetGame() },
                 onExit = onNavigateBack
             )
@@ -100,7 +116,7 @@ fun GameScreen(
 }
 
 @Composable
-fun VictoryDialog(onReset: () -> Unit, onExit: () -> Unit) {
+fun VictoryDialog(moves: Int, onReset: () -> Unit, onExit: () -> Unit) {
     Dialog(onDismissRequest = {}) {
         Surface(
             shape = RoundedCornerShape(16.dp),
@@ -119,7 +135,7 @@ fun VictoryDialog(onReset: () -> Unit, onExit: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "You've matched all pairs!",
+                    text = "You've matched all pairs in $moves moves!",
                     fontSize = 16.sp
                 )
                 Spacer(modifier = Modifier.height(24.dp))
