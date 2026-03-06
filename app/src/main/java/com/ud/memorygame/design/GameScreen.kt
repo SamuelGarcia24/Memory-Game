@@ -1,28 +1,41 @@
 package com.ud.memorygame.design
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.ud.memorygame.viewModel.GameViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ud.memorygame.R
 
 @Composable
 fun GameScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+
+    // get the viewmodel instance that controls the game logic
+    viewModel: GameViewModel = viewModel()
 ) {
 
-    var flippedIndex by remember { mutableStateOf<Int?>(null) }
-
+    // grid layout for the memory cards
     LazyVerticalGrid(
-        columns = GridCells.Fixed(4),
+
+        // 4 columns grid
+        columns = GridCells.Fixed(3),
+
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
+
+        // spacing between rows
         verticalArrangement = Arrangement.spacedBy(8.dp),
+
+        // spacing between columns
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
-        items(16) { index ->
+        // create 16 cards
+        items(12) { index ->
 
             Box(
                 modifier = Modifier
@@ -30,11 +43,18 @@ fun GameScreen(
                     .fillMaxWidth()
             ) {
 
+                // memory card composable
                 MemoryCard(
-                    imageRes = R.drawable.card_1,
-                    isFlipped = flippedIndex == index,
+
+                    // temporary image for testing
+                    imageRes = viewModel.cards[index],
+
+                    // card is flipped if its index matches the flipped index
+                    isFlipped = viewModel.flippedCards[index],
+
+                    // notify the viewmodel when the card is clicked
                     onClick = {
-                        flippedIndex = index
+                        viewModel.onCardClicked(index)
                     }
                 )
 
