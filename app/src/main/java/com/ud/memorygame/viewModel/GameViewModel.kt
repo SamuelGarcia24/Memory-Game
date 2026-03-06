@@ -18,13 +18,15 @@ class GameViewModel : ViewModel() {
         R.drawable.card_3,
         R.drawable.card_4,
         R.drawable.card_5,
-        R.drawable.card_6
+        R.drawable.card_6,
+        R.drawable.card_7,
+        R.drawable.card_8,
+        R.drawable.card_9,
+        R.drawable.card_10
     )
 
-    // list that represents the board cards (12 cards shuffled)
-    var cards by mutableStateOf(
-        (baseImages + baseImages).shuffled()
-    )
+    // list that represents the board cards
+    var cards by mutableStateOf(listOf<Int>())
         private set
 
     // stores the index of the first selected card
@@ -33,11 +35,28 @@ class GameViewModel : ViewModel() {
     // stores the index of the second selected card
     var secondSelectedCardIndex by mutableStateOf<Int?>(null)
 
-    // list that stores the flipped state of the 12 cards
-    // false = card hidden
-    // true = card visible
-    var flippedCards by mutableStateOf(List(12) { false })
+    // list that stores the flipped state of the cards
+    var flippedCards by mutableStateOf(listOf<Boolean>())
         private set
+
+    // initialize game with specific number of cards
+    fun initializeGame(cardCount: Int) {
+        // calculate how many pairs we need
+        val pairsNeeded = cardCount / 2
+
+        // take the first 'pairsNeeded' images and duplicate them
+        val selectedImages = baseImages.take(pairsNeeded)
+
+        // create pairs and shuffle
+        cards = (selectedImages + selectedImages).shuffled()
+
+        // initialize flipped cards (all false)
+        flippedCards = List(cardCount) { false }
+
+        // reset selections
+        firstSelectedCardIndex = null
+        secondSelectedCardIndex = null
+    }
 
     // called when a card is clicked
     fun onCardClicked(index: Int) {
@@ -57,24 +76,17 @@ class GameViewModel : ViewModel() {
 
         // store first selected card
         if (firstSelectedCardIndex == null) {
-
             firstSelectedCardIndex = index
-
         }
         // store second selected card and check match
         else if (secondSelectedCardIndex == null) {
-
             secondSelectedCardIndex = index
-
             checkMatch()
-
         }
     }
 
     // checks if the two selected cards are a match
-    // checks if the two selected cards are a match
     private fun checkMatch() {
-
         val firstIndex = firstSelectedCardIndex
         val secondIndex = secondSelectedCardIndex
 
@@ -82,13 +94,11 @@ class GameViewModel : ViewModel() {
 
         // launch coroutine to wait before flipping back
         viewModelScope.launch {
-
             // wait 1 second so player can see the cards
             delay(1000)
 
             // if cards are different flip them back
             if (cards[firstIndex] != cards[secondIndex]) {
-
                 flippedCards = flippedCards.toMutableList().also {
                     it[firstIndex] = false
                     it[secondIndex] = false

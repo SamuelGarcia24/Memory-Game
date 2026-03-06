@@ -7,57 +7,49 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ud.memorygame.viewModel.GameViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ud.memorygame.R
 
 @Composable
 fun GameScreen(
     modifier: Modifier = Modifier,
-
-    // get the viewmodel instance that controls the game logic
+    cardCount: Int,  // receive card count from navigation
     viewModel: GameViewModel = viewModel()
 ) {
+    // initialize game when card count changes
+    LaunchedEffect(cardCount) {
+        viewModel.initializeGame(cardCount)
+    }
+
+    // calculate columns based on card count
+    val columns = when (cardCount) {
+        12 -> 3  // 4x3 grid
+        16 -> 4  // 4x4 grid
+        20 -> 4  // 4x5 grid (still 4 columns)
+        else -> 3
+    }
 
     // grid layout for the memory cards
     LazyVerticalGrid(
-
-        // 4 columns grid
-        columns = GridCells.Fixed(3),
-
+        columns = GridCells.Fixed(columns),
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-
-        // spacing between rows
         verticalArrangement = Arrangement.spacedBy(8.dp),
-
-        // spacing between columns
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-
-        // create 16 cards
-        items(12) { index ->
-
+        // create cards based on viewModel.cards size
+        items(viewModel.cards.size) { index ->
             Box(
                 modifier = Modifier
                     .aspectRatio(1f)
                     .fillMaxWidth()
             ) {
-
-                // memory card composable
                 MemoryCard(
-
-                    // cards
                     imageRes = viewModel.cards[index],
-
-                    // card is flipped if its index matches the flipped index
                     isFlipped = viewModel.flippedCards[index],
-
-                    // notify the viewmodel when the card is clicked
                     onClick = {
                         viewModel.onCardClicked(index)
                     }
                 )
-
             }
         }
     }

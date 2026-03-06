@@ -21,13 +21,11 @@ import com.ud.memorygame.utils.MusicManager
 
 class MainActivity : ComponentActivity() {
 
-    // for music
     private lateinit var musicManager: MusicManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // initialize music manager
         musicManager = MusicManager(this)
 
         setContent {
@@ -44,7 +42,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // lifecycle methods for music
     override fun onPause() {
         super.onPause()
         musicManager.pauseMusic()
@@ -76,17 +73,14 @@ fun MemoryGameApp(
         navController = navController,
         startDestination = "menu"
     ) {
-        // menu screen
         composable("menu") {
             MenuScreen(navController = navController)
         }
 
-        // levels screen
         composable("levels") {
             LevelsScreen(navController = navController)
         }
 
-        // game screen with card count parameter
         composable(
             "game/{cardCount}",
             arguments = listOf(navArgument("cardCount") { type = NavType.IntType })
@@ -100,9 +94,10 @@ fun MemoryGameApp(
 
             GameScreen(
                 modifier = Modifier,
+                cardCount = cardCount
             )
 
-            // resume music when leaving game (optional)
+            // resume music when leaving game
             DisposableEffect(Unit) {
                 onDispose {
                     musicManager.resumeMusic()

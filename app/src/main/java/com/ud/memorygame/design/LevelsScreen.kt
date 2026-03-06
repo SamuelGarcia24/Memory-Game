@@ -21,17 +21,19 @@ import com.ud.memorygame.R
 fun LevelsScreen(
     navController: NavController
 ) {
+    // box for background image
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         // background image
         Image(
-            painter = painterResource(id = R.drawable.fondo),
+            painter = painterResource(id = R.drawable.fondo2),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
 
+        // content overlay
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -41,20 +43,14 @@ fun LevelsScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = "select level",
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
 
-                // easy button
+                // easy button (12 cards - 6 pairs)
                 Button(
                     onClick = {
                         navController.navigate("game/12")
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF4CAF50)
+                        containerColor = Color(0xFF4CAF50) // green
                     ),
                     modifier = Modifier
                         .width(250.dp)
@@ -68,13 +64,13 @@ fun LevelsScreen(
                     )
                 }
 
-                // medium button
+                // medium button (16 cards - 8 pairs)
                 Button(
                     onClick = {
                         navController.navigate("game/16")
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFF9800)
+                        containerColor = Color(0xFFFF9800) // orange
                     ),
                     modifier = Modifier
                         .width(250.dp)
@@ -88,13 +84,13 @@ fun LevelsScreen(
                     )
                 }
 
-                // hard button
+                // hard button (20 cards - 10 pairs)
                 Button(
                     onClick = {
                         navController.navigate("game/20")
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFF44336)
+                        containerColor = Color(0xFFF44336) // red
                     ),
                     modifier = Modifier
                         .width(250.dp)
@@ -110,7 +106,7 @@ fun LevelsScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // back button
+                // back to menu button
                 Button(
                     onClick = {
                         navController.popBackStack()
