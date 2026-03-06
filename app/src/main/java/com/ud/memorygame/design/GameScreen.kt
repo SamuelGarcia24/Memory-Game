@@ -121,6 +121,7 @@ fun GameScreen(
     }
 }
 
+// victory screen
 @Composable
 fun VictoryDialog(moves: Int, onReset: () -> Unit, onExit: () -> Unit) {
     Dialog(onDismissRequest = {}) {
