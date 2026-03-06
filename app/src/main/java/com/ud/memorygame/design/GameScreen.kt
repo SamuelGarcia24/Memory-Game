@@ -46,7 +46,7 @@ fun GameScreen(
                 // memory card composable
                 MemoryCard(
 
-                    // temporary image for testing
+                    // cards
                     imageRes = viewModel.cards[index],
 
                     // card is flipped if its index matches the flipped index
