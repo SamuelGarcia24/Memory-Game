@@ -40,28 +40,51 @@ fun GameScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // grid layout for the memory cards
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(columns),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(viewModel.cards.size) { index ->
-                Box(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .fillMaxWidth()
+        Column(modifier = Modifier.fillMaxSize()) {
+            // grid layout for the memory cards
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columns),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(viewModel.cards.size) { index ->
+                    Box(
+                        modifier = Modifier
+                            .aspectRatio(1f)
+                            .fillMaxWidth()
+                    ) {
+                        MemoryCard(
+                            imageRes = viewModel.cards[index],
+                            isFlipped = viewModel.flippedCards[index],
+                            onClick = {
+                                viewModel.onCardClicked(index)
+                            }
+                        )
+                    }
+                }
+            }
+
+            // Game Controls
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp, start = 16.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Button(
+                    onClick = { viewModel.resetGame() },
+                    modifier = Modifier.weight(1f)
                 ) {
-                    MemoryCard(
-                        imageRes = viewModel.cards[index],
-                        isFlipped = viewModel.flippedCards[index],
-                        onClick = {
-                            viewModel.onCardClicked(index)
-                        }
-                    )
+                    Text("Reset")
+                }
+                Button(
+                    onClick = onNavigateBack,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Exit")
                 }
             }
         }
