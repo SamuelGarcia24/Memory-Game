@@ -57,7 +57,7 @@ fun LevelsScreen(
                         .height(60.dp)
                 ) {
                     Text(
-                        text = "easy",
+                        text = "Easy",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -77,7 +77,7 @@ fun LevelsScreen(
                         .height(60.dp)
                 ) {
                     Text(
-                        text = "medium",
+                        text = "Medium",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -97,7 +97,7 @@ fun LevelsScreen(
                         .height(60.dp)
                 ) {
                     Text(
-                        text = "hard",
+                        text = "Hard",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White

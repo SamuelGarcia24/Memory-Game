@@ -64,9 +64,9 @@ fun MemoryGameApp(
 ) {
     val navController = rememberNavController()
 
-    // start music when app launches
+    // start menu music when app launches
     LaunchedEffect(Unit) {
-        musicManager.startMusic()
+        musicManager.startMenuMusic()
     }
 
     NavHost(
@@ -74,10 +74,20 @@ fun MemoryGameApp(
         startDestination = "menu"
     ) {
         composable("menu") {
+            // this runs EVERY TIME you enter menu screen
+            LaunchedEffect(Unit) {
+                musicManager.startMenuMusic()  // always play menu music
+            }
+
             MenuScreen(navController = navController)
         }
 
         composable("levels") {
+            // this runs EVERY TIME you enter levels screen
+            LaunchedEffect(Unit) {
+                musicManager.startMenuMusic()  // always play menu music
+            }
+
             LevelsScreen(navController = navController)
         }
 
@@ -87,25 +97,14 @@ fun MemoryGameApp(
         ) { backStackEntry ->
             val cardCount = backStackEntry.arguments?.getInt("cardCount") ?: 12
 
-            // pause music when game starts
-            LaunchedEffect(Unit) {
-                musicManager.pauseMusic()
-            }
-
             GameScreen(
                 modifier = Modifier,
                 cardCount = cardCount,
                 onNavigateBack = {
-                    navController.popBackStack()
-                }
+                    navController.popBackStack()  // just go back, music handled by menu/levels
+                },
+                musicManager = musicManager
             )
-
-            // resume music when leaving game
-            DisposableEffect(Unit) {
-                onDispose {
-                    musicManager.resumeMusic()
-                }
-            }
         }
     }
 }

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.ud.memorygame.viewModel.GameViewModel
+import com.ud.memorygame.utils.MusicManager
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
@@ -24,8 +25,21 @@ fun GameScreen(
     modifier: Modifier = Modifier,
     cardCount: Int,
     onNavigateBack: () -> Unit,
+    musicManager: MusicManager,
     viewModel: GameViewModel = viewModel()
 ) {
+    // start gameplay music when screen appears
+    LaunchedEffect(Unit) {
+        musicManager.startGameplayMusic()
+    }
+
+    // stop music when screen disappears (menu/levels will start their own)
+    DisposableEffect(Unit) {
+        onDispose {
+            musicManager.stopMusic()
+        }
+    }
+
     // initialize game when card count changes
     LaunchedEffect(cardCount) {
         viewModel.initializeGame(cardCount)
@@ -107,13 +121,19 @@ fun GameScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Button(
-                    onClick = { viewModel.resetGame() },
+                    onClick = {
+                        viewModel.resetGame()
+                        // music continues playing (same screen)
+                    },
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("Reset")
                 }
                 Button(
-                    onClick = onNavigateBack,
+                    onClick = {
+                        // JUST NAVIGATE BACK - music handled by menu/levels screens
+                        onNavigateBack()
+                    },
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("Exit")
@@ -126,8 +146,14 @@ fun GameScreen(
             VictoryDialog(
                 moves = viewModel.moves,
                 time = viewModel.secondsElapsed,
-                onReset = { viewModel.resetGame() },
-                onExit = onNavigateBack
+                onReset = {
+                    viewModel.resetGame()
+                    // music continues playing (same screen)
+                },
+                onExit = {
+                    // JUST NAVIGATE BACK - music handled by menu/levels screens
+                    onNavigateBack()
+                }
             )
         }
     }
