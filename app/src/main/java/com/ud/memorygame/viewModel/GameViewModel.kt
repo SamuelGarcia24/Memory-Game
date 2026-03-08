@@ -59,6 +59,12 @@ class GameViewModel : ViewModel() {
     private var timerJob: Job? = null
     private var currentCardCount = 0
 
+    private var onSoundEffect: ((Int) -> Unit)? = null
+
+    fun setSoundListener(listener: (Int) -> Unit) {
+        onSoundEffect = listener
+    }
+
     // initialize game with specific number of cards
     fun initializeGame(cardCount: Int) {
         currentCardCount = cardCount
@@ -95,8 +101,14 @@ class GameViewModel : ViewModel() {
         }
     }
 
+
+
     // called when a card is clicked
     fun onCardClicked(index: Int) {
+
+        // sound when touching the card
+        onSoundEffect?.invoke(R.raw.touch)
+
         // ignore click if game is over
         if (isGameOver) return
 
@@ -131,6 +143,15 @@ class GameViewModel : ViewModel() {
         val secondIndex = secondSelectedCardIndex
 
         if (firstIndex == null || secondIndex == null) return
+
+        if (cards[firstIndex] != cards[secondIndex]) {
+            onSoundEffect?.invoke(R.raw.no) // Error sound
+        } else {
+            onSoundEffect?.invoke(R.raw.success) // Sound of success
+            if (flippedCards.all { it }) {
+                onSoundEffect?.invoke(R.raw.win) // win
+            }
+        }
 
         // launch coroutine to wait before flipping back
         viewModelScope.launch {

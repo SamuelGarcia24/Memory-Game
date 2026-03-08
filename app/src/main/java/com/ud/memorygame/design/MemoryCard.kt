@@ -5,61 +5,59 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.ud.memorygame.R
+import androidx.compose.animation.core.*
+import androidx.compose.ui.graphics.*
 
 @Composable
 fun MemoryCard(
-
-    // image that will be shown when the card is flipped
     imageRes: Int,
-
-    // indicates if the card is currently flipped
     isFlipped: Boolean,
-
-    // function executed when the user taps the card
     onClick: () -> Unit
 ) {
+    // Animación de la rotación (0 a 180 grados)
+    val rotation by animateFloatAsState(
+        targetValue = if (isFlipped) 180f else 0f,
+        animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+        label = "cardFlip"
+    )
 
     Card(
-
         modifier = Modifier
             .fillMaxSize()
-
-            // make the card clickable
-            .clickable {
-                onClick()
+            .graphicsLayer {
+                // Aplicamos la rotación en el eje Y
+                rotationY = rotation
+                cameraDistance = 12f * density // Agrega profundidad 3D
             }
-
+            .clickable { onClick() }
     ) {
-
         Box(
-
             modifier = Modifier.fillMaxSize(),
-
-            // center the image inside the card
             contentAlignment = Alignment.Center
-
         ) {
-
-            // decide which image to show
-            // if the card is flipped show the card image
-            // otherwise show the back image
-            val imageToShow =
-                if (isFlipped) imageRes
-                else R.drawable.hide
-
-            Image(
-
-                painter = painterResource(id = imageToShow),
-
-                contentDescription = "card",
-
-                modifier = Modifier.fillMaxSize()
-
-            )
+            if (rotation <= 90f) {
+                // Lado de atrás (oculto)
+                Image(
+                    painter = painterResource(id = R.drawable.hide),
+                    contentDescription = "back",
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                // Lado de adelante (imagen real)
+                // Invertimos la imagen 180 grados para que no se vea "espejada"
+                Image(
+                    painter = painterResource(id = imageRes),
+                    contentDescription = "front",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer { rotationY = 180f }
+                )
+            }
         }
     }
 }

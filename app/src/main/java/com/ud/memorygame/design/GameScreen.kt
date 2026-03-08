@@ -3,6 +3,7 @@ package com.ud.memorygame.design
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -10,12 +11,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.geometry.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.animation.core.*
 import com.ud.memorygame.viewModel.GameViewModel
 import com.ud.memorygame.utils.MusicManager
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,6 +54,35 @@ fun GameScreen(
         16 -> 4  // 4x4 grid
         20 -> 4  // 4x5 grid
         else -> 3
+    }
+
+    val moves = viewModel.moves
+    val pairsFound = viewModel.pairsFound
+    LaunchedEffect(pairsFound) {
+        if (pairsFound > 0 && !viewModel.isGameOver) {
+            musicManager.playSoundEffect(com.ud.memorygame.R.raw.success)
+        }
+    }
+
+    LaunchedEffect(moves) {
+        if (moves > 0) {
+            kotlinx.coroutines.delay(600)
+            if (viewModel.firstSelectedCardIndex != null && viewModel.secondSelectedCardIndex != null) {
+                val first = viewModel.cards[viewModel.firstSelectedCardIndex!!]
+                val second = viewModel.cards[viewModel.secondSelectedCardIndex!!]
+
+                if (first != second) {
+                    musicManager.playSoundEffect(com.ud.memorygame.R.raw.no)
+                }
+            }
+        }
+    }
+// sound of win
+    LaunchedEffect(viewModel.isGameOver) {
+        if (viewModel.isGameOver) {
+            musicManager.stopMusic()
+            musicManager.playSoundEffect(com.ud.memorygame.R.raw.win)
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -106,7 +138,10 @@ fun GameScreen(
                             imageRes = viewModel.cards[index],
                             isFlipped = viewModel.flippedCards[index],
                             onClick = {
-                                viewModel.onCardClicked(index)
+                                if (!viewModel.flippedCards[index] && !viewModel.isGameOver) {
+                                    musicManager.playSoundEffect(com.ud.memorygame.R.raw.touch)
+                                    viewModel.onCardClicked(index)
+                                }
                             }
                         )
                     }
@@ -143,6 +178,7 @@ fun GameScreen(
 
         // Victory Dialog
         if (viewModel.isGameOver) {
+
             VictoryDialog(
                 moves = viewModel.moves,
                 time = viewModel.secondsElapsed,
@@ -155,6 +191,8 @@ fun GameScreen(
                     onNavigateBack()
                 }
             )
+
+            ConfettiScreen()
         }
     }
 }
@@ -202,6 +240,36 @@ fun VictoryDialog(moves: Int, time: Int, onReset: () -> Unit, onExit: () -> Unit
                     Text("Main Menu")
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ConfettiScreen() {
+    val infiniteTransition = rememberInfiniteTransition(label = "confetti")
+
+    val yOffset by infiniteTransition.animateFloat(
+        initialValue = -100f,
+        targetValue = 2000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(3000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "yOffset"
+    )
+
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val colors = listOf(Color.Red, Color.Yellow, Color.Blue, Color.Green, Color.Magenta, Color.Cyan)
+
+        repeat(50) { index ->
+            val xPos = (index * 40f) % size.width
+            val randomY = (yOffset + (index * 100f)) % size.height
+
+            drawRect(
+                color = colors[index % colors.size],
+                topLeft = Offset(xPos, randomY),
+                size = Size(20f, 20f)
+            )
         }
     }
 }

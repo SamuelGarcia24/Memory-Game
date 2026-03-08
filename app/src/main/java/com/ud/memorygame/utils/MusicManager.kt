@@ -9,6 +9,8 @@ class MusicManager(private val context: Context) {
     private var mediaPlayer: MediaPlayer? = null
     private var currentMusic: Int? = null  // track which music is playing
 
+    private val BACKGROUND_MUSIC_VOLUME = 0.4f
+
     // start menu music
     fun startMenuMusic() {
         // only restart if different music or not playing
@@ -24,12 +26,12 @@ class MusicManager(private val context: Context) {
 
     // start gameplay music
     fun startGameplayMusic() {
-        // only restart if different music or not playing
         if (currentMusic != R.raw.gameplay_music) {
             stopMusic()
             currentMusic = R.raw.gameplay_music
             mediaPlayer = MediaPlayer.create(context, R.raw.gameplay_music).apply {
                 isLooping = true
+                setVolume(BACKGROUND_MUSIC_VOLUME, BACKGROUND_MUSIC_VOLUME)
                 start()
             }
         }
@@ -68,5 +70,17 @@ class MusicManager(private val context: Context) {
     // check if music is playing
     fun isPlaying(): Boolean {
         return mediaPlayer?.isPlaying == true
+    }
+
+    // play short one-shot effects
+    fun playSoundEffect(resId: Int, volume: Float = 0.8f) {
+        try {
+            val mp = MediaPlayer.create(context, resId)
+            mp.setVolume(volume, volume)
+            mp.setOnCompletionListener { it.release() }
+            mp.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
