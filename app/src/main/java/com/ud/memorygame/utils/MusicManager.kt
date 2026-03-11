@@ -31,6 +31,7 @@ class MusicManager(private val context: Context) {
             currentMusic = R.raw.gameplay_music
             mediaPlayer = MediaPlayer.create(context, R.raw.gameplay_music).apply {
                 isLooping = true
+                // background music does not saturate
                 setVolume(BACKGROUND_MUSIC_VOLUME, BACKGROUND_MUSIC_VOLUME)
                 start()
             }

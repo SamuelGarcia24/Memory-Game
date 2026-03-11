@@ -19,7 +19,7 @@ fun MemoryCard(
     isFlipped: Boolean,
     onClick: () -> Unit
 ) {
-    // Animación de la rotación (0 a 180 grados)
+    // Rotation animation
     val rotation by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
         animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
@@ -30,9 +30,8 @@ fun MemoryCard(
         modifier = Modifier
             .fillMaxSize()
             .graphicsLayer {
-                // Aplicamos la rotación en el eje Y
                 rotationY = rotation
-                cameraDistance = 12f * density // Agrega profundidad 3D
+                cameraDistance = 12f * density // 3D effect
             }
             .clickable { onClick() }
     ) {
@@ -41,15 +40,12 @@ fun MemoryCard(
             contentAlignment = Alignment.Center
         ) {
             if (rotation <= 90f) {
-                // Lado de atrás (oculto)
                 Image(
                     painter = painterResource(id = R.drawable.hide),
                     contentDescription = "back",
                     modifier = Modifier.fillMaxSize()
                 )
             } else {
-                // Lado de adelante (imagen real)
-                // Invertimos la imagen 180 grados para que no se vea "espejada"
                 Image(
                     painter = painterResource(id = imageRes),
                     contentDescription = "front",

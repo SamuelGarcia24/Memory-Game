@@ -19,6 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.ButtonDefaults
 import com.ud.memorygame.viewModel.GameViewModel
 import com.ud.memorygame.utils.MusicManager
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -92,6 +95,7 @@ fun GameScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -123,10 +127,11 @@ fun GameScreen(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(columns),
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp),
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                userScrollEnabled = false
             ) {
                 items(viewModel.cards.size) { index ->
                     Box(
@@ -160,18 +165,22 @@ fun GameScreen(
                         viewModel.resetGame()
                         // music continues playing (same screen)
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).height(56.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ) {
-                    Text("Reset")
+                    Text("Reset", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
                 Button(
                     onClick = {
                         // JUST NAVIGATE BACK - music handled by menu/levels screens
                         onNavigateBack()
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).height(56.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
                 ) {
-                    Text("Exit")
+                    Text("Exit", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 }
             }
         }

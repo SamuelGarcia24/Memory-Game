@@ -1,12 +1,13 @@
 package com.ud.memorygame.design
 
 import androidx.compose.foundation.Image
+import java.time.format.*
+import androidx.compose.foundation.shape.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -17,6 +18,32 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ud.memorygame.R
 
+@Composable
+fun MenuButton(
+    text: String,
+    onClick: () -> Unit,
+    containerColor: Color = MaterialTheme.colorScheme.primary
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .height(65.dp)
+            .padding(vertical = 8.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = containerColor),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp)
+    ) {
+        Text(
+            text = text.uppercase(),
+            style = TextStyle(
+                fontSize = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = 2.sp
+            )
+        )
+    }
+}
 @Composable
 fun MenuScreen(
     navController: NavController
@@ -71,3 +98,4 @@ fun MenuScreen(
         }
     }
 }
+
